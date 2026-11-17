@@ -67,7 +67,7 @@ The system includes a dark-mode neon telemetry generator (`scripts/generate_plot
 | Telemetry Figure | Description |
 | :--- | :--- |
 | **`01_latency_distribution.png`** | Histogram showing tight latency grouping centered around ~1053 µs mean. |
-| **`02_latency_percentiles.png`** | Percentile latency curve from P50 (971 µs) to P99.9 (3841 µs). |
+| **`02_latency_percentiles.png`** | Percentile latency curve from P50 (971.49 µs) to P99.9 (3809.07 µs). |
 | **`03_stage_breakdown.png`** | Microsecond breakdown across AVX2 Decode, CUDA Embedding, and BioGuard. |
 | **`04_channel_throughput.png`** | Sustained real-time processing throughput across 65,536 neural channels. |
 | **`05_thermal_pennes.png`** | Tissue temperature rise trajectory staying safely below ISO +0.50 °C limit (+0.0900 °C peak). |
@@ -138,10 +138,10 @@ Galvanic feedback stimulus is strictly clamped below `< 30 µC/cm²`.
 | **Latent Vector Dim** | **1024 Dimensions** | `1024-d` | **PASSED** |
 | **Minimum Loop Latency** | **847.66 µs** | `< 1000.00 µs` | **PASSED** |
 | **Mean Loop Latency** | **1053.40 µs** | `≈ 1.00 ms` | **PASSED** |
-| **P50 Latency (Median)** | **971.55 µs** | `< 1000.00 µs` | **PASSED** |
-| **P90 Latency** | **1237.98 µs** | `< 1500.00 µs` | **PASSED** |
-| **P99 Latency (SLA Peak)** | **2316.79 µs** | `< 3000.00 µs` | **PASSED** |
-| **P99.9 Latency** | **3841.18 µs** | `< 5000.00 µs` | **PASSED** |
+| **P50 Latency (Median)** | **971.49 µs** | `< 1000.00 µs` | **PASSED** |
+| **P90 Latency** | **1237.80 µs** | `< 1500.00 µs` | **PASSED** |
+| **P99 Latency (SLA Peak)** | **2298.53 µs** | `< 3000.00 µs` | **PASSED** |
+| **P99.9 Latency** | **3809.07 µs** | `< 5000.00 µs` | **PASSED** |
 | **Max Latency Peak** | **10381.50 µs** * | Cold-start transient | **EXPLAINED** |
 | **Peak Bioheat Rise (ΔT)** | **+0.0900 °C** | `< +0.5000 °C` (ISO limit) | **PASSED** |
 | **Max Charge Density** | **< 30 µC/cm²** | `< 30 µC/cm²` | **PASSED** |

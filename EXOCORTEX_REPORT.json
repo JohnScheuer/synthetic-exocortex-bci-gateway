@@ -1,0 +1,13 @@
+{
+  "gpu": "NVIDIA GeForce RTX 5060",
+  "cycles": 10000,
+  "min_us": 116.27,
+  "mean_us": 174.877,
+  "p50_us": 147.146,
+  "p90_us": 229.789,
+  "p99_us": 558.321,
+  "p99_9_us": 1060.19,
+  "max_us": 41950.4,
+  "sla_violation_rate": 1.23,
+  "max_tissue_temp_rise_c": 0.000921996
+}

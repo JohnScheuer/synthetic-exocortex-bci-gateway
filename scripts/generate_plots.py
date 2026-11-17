@@ -23,8 +23,10 @@ COLOR_PURPLE = "#b026ff"
 # 1. Latency Distribution Histogram
 plt.figure(figsize=(10, 6))
 counts, bins, patches = plt.hist(df['total_latency_us'], bins=50, color=COLOR_CYAN, alpha=0.75, edgecolor='black')
-plt.axvline(df['total_latency_us'].mean(), color=COLOR_MAGENTA, linestyle='--', linewidth=2, label=f"Mean: {df['total_latency_us'].mean():.2f} µs")
-plt.axvline(np.percentile(df['total_latency_us'], 99), color=COLOR_AMBER, linestyle=':', linewidth=2, label=f"P99: {np.percentile(df['total_latency_us'], 99):.2f} µs")
+mean_val = df['total_latency_us'].mean()
+p99_val = np.percentile(df['total_latency_us'], 99)
+plt.axvline(mean_val, color=COLOR_MAGENTA, linestyle='--', linewidth=2, label=f"Mean: {mean_val:.2f} µs")
+plt.axvline(p99_val, color=COLOR_AMBER, linestyle=':', linewidth=2, label=f"P99: {p99_val:.2f} µs")
 plt.title("Synthetic Exocortex Gateway — Latency Distribution (10,000 Cycles @ 1000 Hz)", fontsize=13, fontweight='bold', color='white')
 plt.xlabel("Total Processing Latency (µs)", fontsize=11, color='white')
 plt.ylabel("Cycle Count", fontsize=11, color='white')
@@ -34,14 +36,15 @@ plt.tight_layout()
 plt.savefig(os.path.join(output_dir, "01_latency_distribution.png"), dpi=300)
 plt.close()
 
-# 2. Latency Percentiles Curve
+# 2. Latency Percentiles Curve (Fix: Title & Y-axis margin)
 percentiles = [50, 90, 95, 99, 99.9]
 values = [np.percentile(df['total_latency_us'], p) for p in percentiles]
 plt.figure(figsize=(10, 6))
 plt.plot([str(p) for p in percentiles], values, marker='o', linewidth=2.5, markersize=8, color=COLOR_GREEN)
 for p, v in zip(percentiles, values):
-    plt.annotate(f"{v:.2f} µs", (str(p), v), textcoords="offset points", xytext=(0, 10), ha='center', color=COLOR_CYAN, fontweight='bold')
-plt.title("Latency Percentile Profile (SLA Threshold < 500 µs)", fontsize=13, fontweight='bold', color='white')
+    plt.annotate(f"{v:.2f} µs", (str(p), v), textcoords="offset points", xytext=(0, 12), ha='center', color=COLOR_CYAN, fontweight='bold')
+plt.ylim(min(values) * 0.85, max(values) * 1.25)
+plt.title("Latency Percentile Profile (1000 Hz / 1 ms Frame Budget)", fontsize=13, fontweight='bold', color='white')
 plt.xlabel("Percentile Target", fontsize=11, color='white')
 plt.ylabel("Latency (µs)", fontsize=11, color='white')
 plt.grid(True, linestyle='--', alpha=0.3)
@@ -49,7 +52,7 @@ plt.tight_layout()
 plt.savefig(os.path.join(output_dir, "02_latency_percentiles.png"), dpi=300)
 plt.close()
 
-# 3. Stage Breakdown
+# 3. Stage Breakdown (Fix: xlim to 5e3 for AVX2 label fit)
 stages = ['AVX2 Signal Decode', 'CUDA 1024-d Embedding', 'Cognitive Offload', 'BioGuard Sentinel']
 means = [
     df['avx2_decode_us'].mean(),
@@ -62,7 +65,7 @@ bars = plt.barh(stages, means, color=[COLOR_CYAN, COLOR_MAGENTA, COLOR_PURPLE, C
 for bar in bars:
     w = bar.get_width()
     plt.text(w * 1.15, bar.get_y() + bar.get_height()/2.0, f"{w:.2f} µs", va='center', ha='left', color='white', fontweight='bold')
-plt.xlim(1e-2, 3e2)
+plt.xlim(1e-2, 5e3)
 plt.xscale('log')
 plt.title("Pipeline Stage Microsecond Execution Breakdown", fontsize=13, fontweight='bold', color='white')
 plt.xlabel("Execution Time (µs) — Log Scale", fontsize=11, color='white')
@@ -110,4 +113,4 @@ plt.tight_layout()
 plt.savefig(os.path.join(output_dir, "06_cognitive_entropy.png"), dpi=300)
 plt.close()
 
-print("[PLOTS] 6 Dark-Mode Neon Telemetry Figures generated successfully.")
+print("[PLOTS] All 6 dark-mode figures regenerated successfully with fixed margins and labels.")
