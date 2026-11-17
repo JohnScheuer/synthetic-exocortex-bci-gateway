@@ -1,5 +1,32 @@
+# Build directory and CMake generated files
 build/
+bin/
+lib/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Telemetry CSV data outputs (figures in assets/ are tracked)
+benchmark_telemetry.csv
+
+# Compiled objects and libraries
 *.o
-*.csv
-*.json
-!assets/*.png
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+
+# Python cache & virtual environment
+__pycache__/
+*.pyc
+.venv/
+env/
+
+# IDE and OS specific files
+.vscode/
+.idea/
+.DS_Store
+*.swp
