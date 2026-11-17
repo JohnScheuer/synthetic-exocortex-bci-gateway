@@ -47,6 +47,34 @@ The **Synthetic Exocortex BCI Gateway** is a deterministic, high-density C++20/C
 
 ---
 
+## Visual Telemetry Suite
+
+The system includes a dark-mode neon telemetry generator (`scripts/generate_plots.py`) rendering execution profiles directly from CSV telemetry logs:
+
+<p align="center">
+  <img src="assets/01_latency_distribution.png" width="48%" />
+  <img src="assets/02_latency_percentiles.png" width="48%" />
+</p>
+<p align="center">
+  <img src="assets/03_stage_breakdown.png" width="48%" />
+  <img src="assets/04_channel_throughput.png" width="48%" />
+</p>
+<p align="center">
+  <img src="assets/05_thermal_pennes.png" width="48%" />
+  <img src="assets/06_cognitive_entropy.png" width="48%" />
+</p>
+
+| Telemetry Figure | Description |
+| :--- | :--- |
+| **`01_latency_distribution.png`** | Histogram showing tight latency grouping centered around ~1053 µs mean. |
+| **`02_latency_percentiles.png`** | Percentile latency curve from P50 (971 µs) to P99.9 (3841 µs). |
+| **`03_stage_breakdown.png`** | Microsecond breakdown across AVX2 Decode, CUDA Embedding, and BioGuard. |
+| **`04_channel_throughput.png`** | Sustained real-time processing throughput across 65,536 neural channels. |
+| **`05_thermal_pennes.png`** | Tissue temperature rise trajectory staying safely below ISO +0.50 °C limit (+0.0900 °C peak). |
+| **`06_cognitive_entropy.png`** | Real-time Shannon entropy values triggering cloud offload when $H(X) > 42.5$. |
+
+---
+
 ## C++20, AVX2 SIMD & CUDA Kernel Deep-Dive
 
 ### 1. AVX2 SIMD Neural Signal Demuxing (CPU Stage)
@@ -119,23 +147,6 @@ Galvanic feedback stimulus is strictly clamped below `< 30 µC/cm²`.
 | **Max Charge Density** | **< 30 µC/cm²** | `< 30 µC/cm²` | **PASSED** |
 
 *\* Footnote: The Max Latency peak of 10381.50 µs occurred exclusively during Cycle 0 due to CUDA runtime context initialization and Hyper-V/WDDM memory paging transients under WSL2.*
-
----
-
-## Visual Telemetry Suite
-
-The system includes a dark-mode neon telemetry generator (`scripts/generate_plots.py`) rendering execution profiles directly from CSV telemetry logs:
-
-| Telemetry Figure | Description |
-| :--- | :--- |
-| **`01_latency_distribution.png`** | Histogram showing tight latency grouping centered around ~1053 µs mean. |
-| **`02_latency_percentiles.png`** | Percentile latency curve from P50 (971 µs) to P99.9 (3841 µs). |
-| **`03_stage_breakdown.png`** | Microsecond breakdown across AVX2 Decode, CUDA Embedding, and BioGuard. |
-| **`04_channel_throughput.png`** | Sustained real-time processing throughput across 65,536 neural channels. |
-| **`05_thermal_pennes.png`** | Tissue temperature rise trajectory staying safely below ISO +0.50 °C limit (+0.0900 °C peak). |
-| **`06_cognitive_entropy.png`** | Real-time Shannon entropy values triggering cloud offload when $H(X) > 42.5$. |
-
-*(All generated plots are tracked in `assets/`)*
 
 ---
 
