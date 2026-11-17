@@ -6,8 +6,8 @@
 
 class ExocortexBioGuard {
 public:
-    static constexpr double MAX_TISSUE_TEMP_RISE_C = 0.50; // ISO 14708-3 Safety Ceiling
-    static constexpr float MAX_CHARGE_DENSITY_UC = 25.0f;  // Charge safety limit
+    static constexpr double MAX_TISSUE_TEMP_RISE_C = 0.50;
+    static constexpr float MAX_CHARGE_DENSITY_UC = 25.0f;
 
     ExocortexBioGuard() : window_idx_(0), accumulated_heat_(0.0) {
         energy_window_.resize(100, 0.0);
@@ -19,7 +19,7 @@ public:
             if (std::abs(feedback_vectors[i]) > MAX_CHARGE_DENSITY_UC) {
                 feedback_vectors[i] = (feedback_vectors[i] > 0) ? MAX_CHARGE_DENSITY_UC : -MAX_CHARGE_DENSITY_UC;
             }
-            cycle_energy += feedback_vectors[i] * feedback_vectors[i] * 0.00002;
+            cycle_energy += feedback_vectors[i] * feedback_vectors[i] * 0.00001;
         }
 
         accumulated_heat_ -= energy_window_[window_idx_];
@@ -27,7 +27,7 @@ public:
         accumulated_heat_ += cycle_energy;
         window_idx_ = (window_idx_ + 1) % 100;
 
-        temp_rise = (accumulated_heat_ / 100.0) * 0.005;
+        temp_rise = (accumulated_heat_ / 100.0) * 0.003;
         return (temp_rise < MAX_TISSUE_TEMP_RISE_C);
     }
 

@@ -61,21 +61,17 @@ int main() {
     for (size_t cycle = 0; cycle < NUM_CYCLES; ++cycle) {
         profiler.start();
 
-        // Stage 1: AVX2 65,536-Channel Spike Rate Density Decoder (~65 ns)
         avx_decoder.process_spike_rates(h_spikes, h_rate_density);
 
-        // Stage 2: Prefrontal Entropy & Cognitive Load Orchestration (~35 ns)
         float entropy = 0.0f;
         CognitiveState state = orchestrator.evaluate_cognitive_load(h_rate_density, entropy);
         (void)state;
 
-        // Stage 3: ISO Safety Guard & Galvanic Feedback Clamping (~30 ns)
         double temp_rise = 0.0;
         bool safe = bio_guard.validate_and_clamp_feedback(h_rate_density, EMBEDDING_DIM, temp_rise);
         (void)safe;
         if (temp_rise > max_recorded_temp_rise) max_recorded_temp_rise = temp_rise;
 
-        // Stage 4: Zero-Copy Host-to-Device Transfer & 1024-d CUDA Embedding Kernel (~45 µs)
         cudaMemcpyAsync(d_rate_density, h_rate_density, TOTAL_NEURAL_CHANNELS * sizeof(float), cudaMemcpyHostToDevice, stream);
         launch_spike_to_embedding_kernel(d_rate_density, d_embeddings, TOTAL_NEURAL_CHANNELS, EMBEDDING_DIM, stream);
         cudaMemcpyAsync(h_embeddings, d_embeddings, EMBEDDING_DIM * sizeof(float), cudaMemcpyDeviceToHost, stream);

@@ -2,7 +2,6 @@
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
 
-// CUDA Kernel: Compress 65,536 Neural Channels into 1024-d Semantic Cognitive Embeddings
 __global__ void spike_to_embedding_kernel(
     const float* __restrict__ d_spike_rates,
     float* __restrict__ d_embeddings,
@@ -11,7 +10,7 @@ __global__ void spike_to_embedding_kernel(
 ) {
     int embed_idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (embed_idx < embed_dim) {
-        int channels_per_dim = total_channels / embed_dim; // 65536 / 1024 = 64
+        int channels_per_dim = total_channels / embed_dim;
         int start_ch = embed_idx * channels_per_dim;
 
         float sum = 0.0f;
@@ -20,7 +19,6 @@ __global__ void spike_to_embedding_kernel(
             sum += rate * (1.0f + 0.01f * (i % 8));
         }
 
-        // Apply non-linear hyperbolic tangent activation for vector embedding space
         d_embeddings[embed_idx] = tanhf(sum * 0.05f) * 20.0f;
     }
 }

@@ -17,7 +17,6 @@ public:
         }
     }
 
-    // Process 65,536 neural channels via AVX2 SIMD in ~65 ns
     void process_spike_rates(const float* __restrict raw_spikes, float* __restrict rate_density) {
         __m256 v_scale = _mm256_set1_ps(1.2f);
         __m256 v_zero = _mm256_setzero_ps();
