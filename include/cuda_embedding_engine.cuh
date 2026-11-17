@@ -3,14 +3,16 @@
 
 #include <cuda_runtime.h>
 
-extern "C" {
-    void launch_spike_to_embedding_kernel(
-        const float* d_spike_rates,
-        float* d_embeddings,
-        int total_channels,
-        int embed_dim,
-        cudaStream_t stream
-    );
-}
+class CUDAEmbeddingEngine {
+private:
+    float* d_rates_;
+    float* d_embeddings_;
 
-#endif // CUDA_EMBEDDING_ENGINE_CUH
+public:
+    CUDAEmbeddingEngine();
+    ~CUDAEmbeddingEngine();
+
+    void launch_embedding_kernel(const float* h_rates, float* h_embeddings);
+};
+
+#endif

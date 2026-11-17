@@ -1,44 +1,40 @@
 #include "cuda_embedding_engine.cuh"
-#include <cuda_runtime.h>
-#include <device_launch_parameters.h>
+#include "avx2_signal_decoder.hpp"
+#include "cognitive_orchestrator.hpp"
+#include <iostream>
 
-__global__ void spike_to_embedding_kernel(
-    const float* __restrict__ d_spike_rates,
-    float* __restrict__ d_embeddings,
-    int total_channels,
-    int embed_dim
-) {
-    int embed_idx = blockIdx.x * blockDim.x + threadIdx.x;
-    if (embed_idx < embed_dim) {
-        int channels_per_dim = total_channels / embed_dim;
-        int start_ch = embed_idx * channels_per_dim;
-
+__global__ void semantic_embedding_kernel(const float* __restrict__ rates, float* __restrict__ embeddings, int channels, int embed_dim) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < embed_dim) {
         float sum = 0.0f;
-        for (int i = 0; i < channels_per_dim; ++i) {
-            float rate = d_spike_rates[start_ch + i];
-            sum += rate * (1.0f + 0.01f * (i % 8));
+        int stride = channels / embed_dim;
+        for (int i = 0; i < stride; ++i) {
+            int chan_idx = idx * stride + i;
+            float r = rates[chan_idx];
+            sum += r * __sinf(chan_idx * 0.01f + idx * 0.05f);
         }
-
-        d_embeddings[embed_idx] = tanhf(sum * 0.05f) * 20.0f;
+        embeddings[idx] = __tanf(sum * 0.001f);
     }
 }
 
-extern "C" {
-    void launch_spike_to_embedding_kernel(
-        const float* d_spike_rates,
-        float* d_embeddings,
-        int total_channels,
-        int embed_dim,
-        cudaStream_t stream
-    ) {
-        int threads_per_block = 256;
-        int blocks_per_grid = (embed_dim + threads_per_block - 1) / threads_per_block;
+CUDAEmbeddingEngine::CUDAEmbeddingEngine() {
+    cudaMalloc(&d_rates_, CHANNELS * sizeof(float));
+    cudaMalloc(&d_embeddings_, EMBEDDING_DIM * sizeof(float));
+}
 
-        spike_to_embedding_kernel<<<blocks_per_grid, threads_per_block, 0, stream>>>(
-            d_spike_rates,
-            d_embeddings,
-            total_channels,
-            embed_dim
-        );
-    }
+CUDAEmbeddingEngine::~CUDAEmbeddingEngine() {
+    cudaFree(d_rates_);
+    cudaFree(d_embeddings_);
+}
+
+void CUDAEmbeddingEngine::launch_embedding_kernel(const float* h_rates, float* h_embeddings) {
+    cudaMemcpy(d_rates_, h_rates, CHANNELS * sizeof(float), cudaMemcpyHostToDevice);
+
+    int threads = 256;
+    int blocks = (EMBEDDING_DIM + threads - 1) / threads;
+
+    semantic_embedding_kernel<<<blocks, threads>>>(d_rates_, d_embeddings_, CHANNELS, EMBEDDING_DIM);
+    cudaDeviceSynchronize();
+
+    cudaMemcpy(h_embeddings, d_embeddings_, EMBEDDING_DIM * sizeof(float), cudaMemcpyDeviceToHost);
 }
